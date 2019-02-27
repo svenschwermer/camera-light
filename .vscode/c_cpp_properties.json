@@ -7,7 +7,8 @@
             "cppStandard": "c++17",
             "defines": [
                 "__AVR_ATtiny817__",
-                "__AVR_DEVICE_NAME__=attiny817"
+                "__AVR_DEVICE_NAME__=attiny817",
+                "F_CPU=16000000ul"
             ],
             "intelliSenseMode": "gcc-x64",
             "includePath": [
