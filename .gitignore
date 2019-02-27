@@ -1,0 +1,8 @@
+*.o
+*.elf
+*.fcstd1
+/firmware/build/
+
+# exclude these for now
+/pcb/
+/parts/

@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "compilerPath": "/usr/bin/avr-gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "defines": [
+                "__AVR_ATtiny817__",
+                "__AVR_DEVICE_NAME__=attiny817"
+            ],
+            "intelliSenseMode": "gcc-x64",
+            "includePath": [
+                "${default}"
+            ]
+        }
+    ],
+    "version": 4
+}
