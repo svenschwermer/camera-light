@@ -1,5 +1,5 @@
 target ?= camera-light.elf
-src = main.c led.c
+src = main.c led.c encoder.c
 obj = $(src:%c=%o)
 
 CC = avr-gcc
