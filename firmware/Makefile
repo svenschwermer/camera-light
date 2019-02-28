@@ -17,7 +17,7 @@ clean:
 	rm -f $(obj) $(target)
 
 flash: $(target)
-	avrdude -p t817 -c xplainedmini_updi -e -U flash:w:$<
+	avrdude -p t817 -c xplainedmini_updi -e -U flash:w:$< -U eeprom:w:$<
 
 dis: $(target)
 	avr-objdump -S $< | vim -R -
