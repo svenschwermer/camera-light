@@ -4,15 +4,26 @@
 
 static volatile int8_t enc_delta;
 static int8_t last;
-
-static inline uint8_t phase_a(void)
+static struct
 {
-    return VPORTC.IN & PIN2_bm;
+    volatile uint8_t press : 1; // pending press
+    uint8_t state : 1;          // debounced state
+    uint8_t cnt : 6;
+} button;
+
+static inline bool phase_a(void)
+{
+    return !!(VPORTC.IN & PIN2_bm);
 }
 
-static inline uint8_t phase_b(void)
+static inline bool phase_b(void)
 {
-    return VPORTC.IN & PIN3_bm;
+    return !!(VPORTC.IN & PIN3_bm);
+}
+
+static inline bool button_active(void)
+{
+    return !(VPORTC.IN & PIN4_bm);
 }
 
 void encoder_init(void)
@@ -22,6 +33,7 @@ void encoder_init(void)
 
     PORTC.PIN2CTRL = PORT_PULLUPEN_bm;
     PORTC.PIN3CTRL = PORT_PULLUPEN_bm;
+    PORTC.PIN4CTRL = PORT_PULLUPEN_bm;
 
     if (phase_a())
         last = 3;
@@ -43,6 +55,16 @@ int8_t encoder_read(void)
     return val >> STEPS_PER_INDENT;
 }
 
+bool encoder_pushed(void)
+{
+    bool state;
+    cli();
+    state = button.press;
+    button.press = 0;
+    sei();
+    return state;
+}
+
 ISR(TCA0_OVF_vect)
 {
     TCA0.SINGLE.INTFLAGS = TCA_SINGLE_OVF_bm;
@@ -59,4 +81,16 @@ ISR(TCA0_OVF_vect)
         last = new;                  // store new as next last
         enc_delta += (diff & 2) - 1; // bit 1 = direction (+/-)
     }
+
+    if (button_active() != !!button.state)
+    {
+        if (++button.cnt == 0x3f)
+        {
+            button.state = !button.state;
+            if (button.state)
+                button.press = 1;
+        }
+    }
+    else
+        button.cnt = 0;
 }

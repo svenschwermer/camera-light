@@ -8,6 +8,7 @@ LDFLAGS = -mmcu=attiny817 -g -Os
 
 $(target): $(obj)
 	$(CC) $(LDFLAGS) -o $@ $^
+	avr-size $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -18,4 +19,7 @@ clean:
 flash: $(target)
 	avrdude -p t817 -c xplainedmini_updi -e -U flash:w:$<
 
-.PHONY: clean flash
+dis: $(target)
+	avr-objdump -S $< | vim -R -
+
+.PHONY: clean flash dis
