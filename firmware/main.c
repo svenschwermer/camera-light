@@ -53,13 +53,13 @@ int main(void)
             state_func(&g, &eeprom.g, set_blue);
             break;
         case set_blue:
-            state_func(&b, &eeprom.b, set_red);
+            state_func(&b, &eeprom.b, set_white);
             break;
         case set_white:
             state_func(&w, &eeprom.w, set_red);
             break;
         }
-        led_rgb(r, g, b);
+        led_rgbw(r, g, b, w);
         _delay_ms(1);
     }
 }

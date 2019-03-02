@@ -89,13 +89,19 @@ void led_init(void)
     PORTMUX.CTRLA |= PORTMUX_LUT0_ALTERNATE_gc; // LUT0-OUT => PB4
 }
 
+#ifdef WHITE_CHANNEL
+void led_rgbw(uint8_t r, uint8_t g, uint8_t b, uint8_t w)
+{
+    led_state.w = w;
+#else
 void led_rgb(uint8_t r, uint8_t g, uint8_t b)
 {
-    led_state.led_index = 0;
-    led_state.sub_index = 1;
+#endif
     led_state.r = r;
     led_state.g = g;
     led_state.b = b;
+    led_state.led_index = 0;
+    led_state.sub_index = 1;
     USART0.CTRLA = USART_DREIE_bm; // Enable Data Register Empty interrupt
     USART0.TXDATAL = g;
 }
@@ -105,12 +111,20 @@ ISR(USART0_DRE_vect)
     switch (led_state.sub_index)
     {
     case 0:
+#ifdef WHITE_CHANNEL
+        USART0.TXDATAL = led_state.r;
+#else
         USART0.TXDATAL = led_state.g;
+#endif
         led_state.sub_index = 1;
         break;
 
     case 1:
+#ifdef WHITE_CHANNEL
+        USART0.TXDATAL = led_state.g;
+#else
         USART0.TXDATAL = led_state.r;
+#endif
         led_state.sub_index = 2;
         break;
 
