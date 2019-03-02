@@ -111,20 +111,12 @@ ISR(USART0_DRE_vect)
     switch (led_state.sub_index)
     {
     case 0:
-#ifdef WHITE_CHANNEL
-        USART0.TXDATAL = led_state.r;
-#else
         USART0.TXDATAL = led_state.g;
-#endif
         led_state.sub_index = 1;
         break;
 
     case 1:
-#ifdef WHITE_CHANNEL
-        USART0.TXDATAL = led_state.g;
-#else
         USART0.TXDATAL = led_state.r;
-#endif
         led_state.sub_index = 2;
         break;
 

@@ -60,6 +60,6 @@ int main(void)
             break;
         }
         led_rgbw(r, g, b, w);
-        _delay_ms(1);
+        _delay_ms(5);
     }
 }
