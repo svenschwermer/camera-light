@@ -13,17 +13,17 @@ static struct
 
 static inline bool phase_a(void)
 {
-    return !!(VPORTC.IN & PIN2_bm);
+    return !!(VPORTA.IN & PIN6_bm);
 }
 
 static inline bool phase_b(void)
 {
-    return !!(VPORTC.IN & PIN3_bm);
+    return !!(VPORTA.IN & PIN7_bm);
 }
 
 static inline bool button_active(void)
 {
-    return !(VPORTC.IN & PIN4_bm);
+    return !(VPORTA.IN & PIN3_bm);
 }
 
 void encoder_init(void)
@@ -31,9 +31,9 @@ void encoder_init(void)
     enc_delta = 0;
     last = 0;
 
-    PORTC.PIN2CTRL = PORT_PULLUPEN_bm;
-    PORTC.PIN3CTRL = PORT_PULLUPEN_bm;
-    PORTC.PIN4CTRL = PORT_PULLUPEN_bm;
+    PORTA.PIN6CTRL = PORT_PULLUPEN_bm;
+    PORTA.PIN7CTRL = PORT_PULLUPEN_bm;
+    PORTA.PIN3CTRL = PORT_PULLUPEN_bm;
 
     if (phase_a())
         last = 3;
