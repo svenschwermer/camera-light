@@ -1,8 +1,9 @@
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 #include <util/delay.h>
-#include "led.h"
 #include "encoder.h"
+#include "ssd1306.h"
+#include "led.h"
 
 enum state
 {
@@ -41,6 +42,7 @@ int main(void)
     led_init();
     encoder_init();
     sei();
+    ssd1306_init();
 
     while (1)
     {
