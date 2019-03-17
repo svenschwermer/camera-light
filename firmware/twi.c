@@ -3,6 +3,8 @@
 #include <avr/pgmspace.h>
 #include "twi.h"
 
+static volatile enum { idle,
+                       busy } state;
 static const uint8_t *write_data;
 static uint8_t bytes_to_write;
 
@@ -18,12 +20,20 @@ void twi_init(uint8_t baud_rate)
     TWI0.MCTRLA = TWI_WIEN_bm | TWI_ENABLE_bm;
     TWI0.MBAUD = baud_rate;
     TWI0.MSTATUS = TWI_BUSSTATE_IDLE_gc;
+
+    state = idle;
+}
+
+void twi_wait(void)
+{
+    while (state != idle)
+        ;
 }
 
 void twi_write(uint8_t slave_address, const uint8_t *data, uint8_t len)
 {
-    while ((TWI0.MSTATUS & TWI_BUSSTATE_gm) != TWI_BUSSTATE_IDLE_gc)
-        ;
+    twi_wait();
+    state = busy;
 
     write_data = data;
     bytes_to_write = len;
@@ -37,6 +47,7 @@ ISR(TWI0_TWIM_vect)
     if (status & (TWI_ARBLOST_bm | TWI_BUSERR_bm))
     {
         // Master Arbitration Lost Bus Error
+        state = idle;
     }
     else if (status & TWI_WIF_bm)
     {
@@ -44,6 +55,7 @@ ISR(TWI0_TWIM_vect)
         {
             // If NOT acknowledged (NACK) by slave, cancel the transaction
             TWI0.MCTRLB = TWI_MCMD_STOP_gc;
+            state = idle;
         }
         else if (bytes_to_write > 0)
         {
@@ -56,6 +68,9 @@ ISR(TWI0_TWIM_vect)
             --bytes_to_write;
         }
         else
+        {
             TWI0.MCTRLB = TWI_MCMD_STOP_gc;
+            state = idle;
+        }
     }
 }
