@@ -2,6 +2,7 @@
 *.elf
 *.fcstd1
 /firmware/build/
+/.vscode/ipch/
 
 # exclude these for now
 /pcb/

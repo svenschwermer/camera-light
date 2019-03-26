@@ -36,12 +36,14 @@ static inline void state_func(uint8_t *v, uint8_t *eemem, enum state next)
     }
 }
 
-static inline void display_state(enum state current, void (*disp_current)(bool), void (*disp_next)(bool))
+static inline void display_state(enum state current, void (*disp_current)(bool),
+                                 void (*disp_next)(bool), uint8_t v_next)
 {
     if (state != current)
     {
         disp_current(false);
         disp_next(true);
+        ssd1306_num(v_next);
     }
 }
 
@@ -67,19 +69,19 @@ int main(void)
         {
         case set_red:
             state_func(&r, &eeprom.r, set_green);
-            display_state(set_red, ssd1306_r, ssd1306_g);
+            display_state(set_red, ssd1306_r, ssd1306_g, g);
             break;
         case set_green:
             state_func(&g, &eeprom.g, set_blue);
-            display_state(set_green, ssd1306_g, ssd1306_b);
+            display_state(set_green, ssd1306_g, ssd1306_b, b);
             break;
         case set_blue:
             state_func(&b, &eeprom.b, set_white);
-            display_state(set_blue, ssd1306_b, ssd1306_w);
+            display_state(set_blue, ssd1306_b, ssd1306_w, w);
             break;
         case set_white:
             state_func(&w, &eeprom.w, set_red);
-            display_state(set_white, ssd1306_w, ssd1306_r);
+            display_state(set_white, ssd1306_w, ssd1306_r, r);
             break;
         }
         led_rgbw(r, g, b, w);

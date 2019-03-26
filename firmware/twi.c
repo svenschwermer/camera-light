@@ -10,10 +10,9 @@ static uint8_t bytes_to_write;
 
 void twi_init(uint8_t baud_rate)
 {
-    PORTA.OUTSET = PIN2_bm | PIN1_bm; // PA2 & PA1
-    PORTA.DIRSET = PIN2_bm | PIN1_bm; // PA2 & PA1
-    //PORTA.PIN2CTRL = PORT_PULLUPEN_bm;
-    //PORTA.PIN1CTRL = PORT_PULLUPEN_bm;
+    // PA2 (SCL); PA1 (SDA)
+    PORTA.OUTSET = PIN2_bm | PIN1_bm;
+    PORTA.DIRSET = PIN2_bm | PIN1_bm;
 
     PORTMUX.CTRLB = PORTMUX_TWI0_ALTERNATE_gc;
 
@@ -60,10 +59,10 @@ ISR(TWI0_TWIM_vect)
         else if (bytes_to_write > 0)
         {
             uintptr_t addr = (uintptr_t)write_data;
-            if (addr >= PROGMEM_START && addr <= PROGMEM_END)
-                TWI0.MDATA = pgm_read_byte(write_data);
-            else
+            if (addr >= INTERNAL_SRAM_START && addr <= INTERNAL_SRAM_END)
                 TWI0.MDATA = *write_data;
+            else
+                TWI0.MDATA = pgm_read_byte(write_data);
             ++write_data;
             --bytes_to_write;
         }

@@ -13,12 +13,12 @@ static struct
 
 static inline bool phase_a(void)
 {
-    return !!(VPORTA.IN & PIN6_bm);
+    return !!(VPORTA.IN & PIN7_bm);
 }
 
 static inline bool phase_b(void)
 {
-    return !!(VPORTA.IN & PIN7_bm);
+    return !!(VPORTA.IN & PIN6_bm);
 }
 
 static inline bool button_active(void)
